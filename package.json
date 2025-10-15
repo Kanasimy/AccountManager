@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint \"src/**/*.{ts,js,vue}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,js,vue}\" --fix",
+    "format": "prettier --write \"src/**/*.{ts,js,vue,json,css,scss,html,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js,vue,json,css,scss,html,md}\""
   },
   "dependencies": {
     "naive-ui": "^2.43.1",
