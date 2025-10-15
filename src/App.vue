@@ -6,6 +6,4 @@ import AccountsManager from './components/AccountsManager.vue'
   <AccountsManager />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

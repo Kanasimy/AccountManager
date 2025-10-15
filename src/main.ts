@@ -8,4 +8,3 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(naive)
 app.mount('#app')
-
