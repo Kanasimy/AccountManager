@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-//собственный кастомные типы данных
+//собственные кастомные типы данных
 export type AccountType = 'local' | 'ldap'
 
 export interface AccountLabel {
@@ -14,22 +14,39 @@ export interface Account {
   password: string | null
 }
 
+function uid() {
+  return Math.random().toString(36).slice(2, 9)
+}
+
 export const useAccountsStore = defineStore('accounts', {
   //начальное состояние
   state: () => ({
     accounts: [
       {
-        id: 'uid()',
+        id: uid(),
         label: [
           {
             text: '',
           },
         ],
         type: 'local' as AccountType,
-        login: '',
+        login: 'чувырла',
         password: '',
       },
     ],
   }),
-  actions: {},
+  actions: {
+    remove(id: string) {
+      this.accounts = this.accounts.filter((a) => a.id !== id)
+    },
+    addEmpty: function () {
+      this.accounts.push({
+        id: uid(),
+        label: [],
+        login: '',
+        password: '',
+        type: undefined,
+      })
+    },
+  },
 })

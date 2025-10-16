@@ -1,12 +1,27 @@
 <script setup lang="ts">
 import { NFlex, NCard, NThing, NAlert, NInput, NSelect, NIcon } from 'naive-ui'
+import { storeToRefs } from 'pinia'
+import { useAccountsStore, type AccountLabel, type AccountType } from '@/stores/accounts'
+const typeOptions = [
+  { label: 'Локальная', value: 'local' },
+  { label: 'LDAP', value: 'ldap' },
+]
+const store = useAccountsStore()
+const { accounts } = storeToRefs(store)
+
+function handleRemove(id: string) {
+  store.remove(id)
+}
+function handleAdd() {
+  store.addEmpty()
+}
 </script>
 
 <template>
   <n-card class="accounts__card">
     <n-flex class="accounts__toolbar" align="center">
       <n-thing class="accounts__heading" title="Учетные записи" />
-      <n-button class="accounts__add-btn" size="large" type="default">
+      <n-button class="accounts__add-btn" size="large" type="default" @click="handleAdd()">
         <template #icon>
           <n-icon size="24">
             <svg
@@ -37,13 +52,13 @@ import { NFlex, NCard, NThing, NAlert, NInput, NSelect, NIcon } from 'naive-ui'
         <span class="accounts__th">Пароль</span>
         <span class="accounts__th" aria-hidden="true" />
       </div>
-      <div class="accounts__row">
+      <div v-for="account in accounts" :key="account.id" class="accounts__row">
         <n-input maxlength="50" placeholder="Метки" />
-        <n-select />
-        <n-input placeholder="Логин" maxlength="100" />
+        <n-select :value="account.type" :options="typeOptions" />
+        <n-input v-model:value="account.login" placeholder="Логин" maxlength="100" />
         <n-input type="password" placeholder="Пароль" maxlength="100" />
         <div class="actions__cell">
-          <n-icon class="accounts__icon" size="24">
+          <n-icon class="accounts__icon" size="24" @click="handleRemove(account.id)">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
