@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+
 //собственные кастомные типы данных
 export type AccountType = 'local' | 'ldap'
 
@@ -20,32 +21,20 @@ function uid() {
 
 export const useAccountsStore = defineStore('accounts', {
   //начальное состояние
-  state: () => ({
-    accounts: [
-      {
-        id: uid(),
-        label: [
-          {
-            text: '',
-          },
-        ],
-        type: 'local' as AccountType,
-        login: 'чувырла',
-        password: '',
-      },
-    ],
+  state: (): { accounts: Account[] } => ({
+    accounts: JSON.parse(localStorage.getItem('accounts') || '[]'),
   }),
   actions: {
     remove(id: string) {
       this.accounts = this.accounts.filter((a) => a.id !== id)
     },
-    addEmpty: function () {
+    addEmpty() {
       this.accounts.push({
         id: uid(),
-        label: [],
+        label: [] as AccountLabel[],
         login: '',
-        password: '',
-        type: undefined,
+        password: '' as string | null,
+        type: 'local' as AccountType,
       })
     },
   },

@@ -2,12 +2,23 @@
 import { NFlex, NCard, NThing, NAlert, NInput, NSelect, NIcon } from 'naive-ui'
 import { storeToRefs } from 'pinia'
 import { useAccountsStore, type AccountLabel, type AccountType } from '@/stores/accounts'
+import { watch } from 'vue'
+
 const typeOptions = [
   { label: 'Локальная', value: 'local' },
   { label: 'LDAP', value: 'ldap' },
 ]
 const store = useAccountsStore()
 const { accounts } = storeToRefs(store)
+
+// следим за изменениями массива accounts
+watch(
+  () => store.accounts,
+  (val) => {
+    localStorage.setItem('accounts', JSON.stringify(val))
+  },
+  { deep: true }
+)
 
 function handleRemove(id: string) {
   store.remove(id)
@@ -54,7 +65,7 @@ function handleAdd() {
       </div>
       <div v-for="account in accounts" :key="account.id" class="accounts__row">
         <n-input maxlength="50" placeholder="Метки" />
-        <n-select :value="account.type" :options="typeOptions" />
+        <n-select v-model:value="account.type" :options="typeOptions" />
         <n-input v-model:value="account.login" placeholder="Логин" maxlength="100" />
         <n-input type="password" placeholder="Пароль" maxlength="100" />
         <div class="actions__cell">
