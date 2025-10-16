@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NFlex, NCard, NThing, NAlert, NInput, NSelect, NIcon } from 'naive-ui'
+import { NForm, NFormItem, NFlex, NCard, NThing, NAlert, NInput, NSelect, NIcon } from 'naive-ui'
 import { storeToRefs } from 'pinia'
 import { useAccountsStore, type AccountLabel, type AccountType } from '@/stores/accounts'
 import { watch } from 'vue'
@@ -8,6 +8,16 @@ const typeOptions = [
   { label: 'Локальная', value: 'local' },
   { label: 'LDAP', value: 'ldap' },
 ]
+
+const rules = {
+  login: [
+    { required: true, message: 'Введите логин', trigger: 'blur' }
+  ],
+  password: [
+    { required: true, message: 'Введите пароль', trigger: 'blur' }
+  ]
+}
+
 const store = useAccountsStore()
 const { accounts } = storeToRefs(store)
 
@@ -63,11 +73,18 @@ function handleAdd() {
         <span class="accounts__th">Пароль</span>
         <span class="accounts__th" aria-hidden="true" />
       </div>
-      <div v-for="account in accounts" :key="account.id" class="accounts__row">
+      <n-form ref="formRef"
+              :model="account"
+              :rules="rules"
+              label-placement="top" v-for="account in accounts" :key="account.id" class="accounts__row">
         <n-input maxlength="50" placeholder="Метки" />
         <n-select v-model:value="account.type" :options="typeOptions" />
-        <n-input v-model:value="account.login" placeholder="Логин" maxlength="100" />
-        <n-input type="password" placeholder="Пароль" maxlength="100" />
+        <n-form-item label="Логин" path="login">
+          <n-input v-model:value="account.login" placeholder="Логин" maxlength="100" />
+        </n-form-item>
+        <n-form-item label="Пароль" path="password">
+          <n-input v-model:value='account.password' type="password" placeholder="Пароль" maxlength="100" />
+        </n-form-item>
         <div class="actions__cell">
           <n-icon class="accounts__icon" size="24" @click="handleRemove(account.id)">
             <svg
@@ -84,7 +101,7 @@ function handleAdd() {
             </svg>
           </n-icon>
         </div>
-      </div>
+      </n-form>
     </div>
   </n-card>
 </template>
