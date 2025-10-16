@@ -10,12 +10,8 @@ const typeOptions = [
 ]
 
 const rules = {
-  login: [
-    { required: true, message: 'Введите логин', trigger: 'blur' }
-  ],
-  password: [
-    { required: true, message: 'Введите пароль', trigger: 'blur' }
-  ]
+  login: [{ required: true, message: 'Введите логин', trigger: 'blur' }],
+  password: [{ required: true, message: 'Введите пароль', trigger: 'blur' }],
 }
 
 const store = useAccountsStore()
@@ -36,6 +32,12 @@ function handleRemove(id: string) {
 function handleAdd() {
   store.addEmpty()
 }
+
+function handleUpdateType(id: string, value: AccountType) {
+  const type = value as AccountType
+  store.update(id, { type, password: value === 'ldap' ? null : '' })
+}
+
 </script>
 
 <template>
@@ -73,17 +75,28 @@ function handleAdd() {
         <span class="accounts__th">Пароль</span>
         <span class="accounts__th" aria-hidden="true" />
       </div>
-      <n-form ref="formRef"
-              :model="account"
-              :rules="rules"
-              label-placement="top" v-for="account in accounts" :key="account.id" class="accounts__row">
+      <n-form
+        autocomplete="off"
+        :model="account"
+        :rules="rules"
+        label-placement="top"
+        v-for="account in accounts"
+        :key="account.id"
+        class="accounts__row"
+      >
         <n-input maxlength="50" placeholder="Метки" />
-        <n-select v-model:value="account.type" :options="typeOptions" />
+        <n-select v-model:value="account.type" :options="typeOptions" @update:value ="(value) => handleUpdateType(account.id, value)" />
         <n-form-item label="Логин" path="login">
           <n-input v-model:value="account.login" placeholder="Логин" maxlength="100" />
         </n-form-item>
         <n-form-item label="Пароль" path="password">
-          <n-input v-model:value='account.password' type="password" placeholder="Пароль" maxlength="100" />
+          <n-input
+            v-if="account.type === 'local'"
+            v-model:value="account.password"
+            type="password"
+            placeholder="Пароль"
+            maxlength="100"
+          />
         </n-form-item>
         <div class="actions__cell">
           <n-icon class="accounts__icon" size="24" @click="handleRemove(account.id)">

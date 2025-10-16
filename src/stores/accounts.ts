@@ -37,5 +37,11 @@ export const useAccountsStore = defineStore('accounts', {
         type: 'local' as AccountType,
       })
     },
+    update(id: string, patch: Partial<Account>) {
+      const item = this.accounts.findIndex(a => a.id === id)
+      if (item !== -1) {
+          this.accounts[item] = { ...this.accounts[item], ...patch } as Account
+      }
+    }
   },
 })
