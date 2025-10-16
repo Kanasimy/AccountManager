@@ -3,7 +3,8 @@ import js from '@eslint/js'
 import vue from 'eslint-plugin-vue'
 import tseslint from 'typescript-eslint'
 import prettier from 'eslint-plugin-prettier'
-import eslintConfigPrettier from 'eslint-config-prettier' // 🆕
+import eslintConfigPrettier from 'eslint-config-prettier'
+import vueParser from 'vue-eslint-parser'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -11,7 +12,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default [
     js.configs.recommended,
-    ...tseslint.configs.recommendedTypeChecked, // <- типовая конфигурация
+    ...tseslint.configs.recommended, // <- типовая конфигурация
     ...vue.configs['flat/recommended'],
     eslintConfigPrettier,
     {
@@ -19,9 +20,10 @@ export default [
         languageOptions: {
             ecmaVersion: 'latest',
             sourceType: 'module',
+            parser: vueParser,
             parserOptions: {
-                tsconfigRootDir: __dirname,
-                project: ['./tsconfig.eslint.json']
+                parser: tseslint.parser,
+                extraFileExtensions: ['.vue']
             }
         },
         settings: {
@@ -35,10 +37,8 @@ export default [
         plugins: { prettier },
         rules: {
             'prettier/prettier': 'error',
-            // Шумные Vue-правила форматирования — пусть Prettier рулит
             'vue/max-attributes-per-line': 'off',
             'vue/html-closing-bracket-newline': 'off',
-            // Остальное по вкусу:
             'vue/multi-word-component-names': 'off',
             '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }]
         },
