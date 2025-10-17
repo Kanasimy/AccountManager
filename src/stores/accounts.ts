@@ -38,10 +38,10 @@ export const useAccountsStore = defineStore('accounts', {
       })
     },
     update(id: string, patch: Partial<Account>) {
-      const item = this.accounts.findIndex(a => a.id === id)
+      const item = this.accounts.findIndex((a) => a.id === id)
       if (item !== -1) {
-          this.accounts[item] = { ...this.accounts[item], ...patch } as Account
+        this.accounts[item] = { ...this.accounts[item], ...patch } as Account
       }
-    }
+    },
   },
 })

@@ -1,5 +1,16 @@
 <script setup lang="ts">
-import { NForm, NFormItem, NFlex, NCard, NThing, NAlert, NInput, NSelect, NIcon } from 'naive-ui'
+import {
+  NForm,
+  NFormItem,
+  NFlex,
+  NCard,
+  NThing,
+  NAlert,
+  NInput,
+  NSelect,
+  NIcon,
+  NButton,
+} from 'naive-ui'
 import { storeToRefs } from 'pinia'
 import { useAccountsStore, type AccountLabel, type AccountType } from '@/stores/accounts'
 import { watch, reactive, onMounted } from 'vue'
@@ -18,7 +29,7 @@ const store = useAccountsStore()
 const { accounts } = storeToRefs(store)
 // Локальные текстовые метки: reactive делает объект реактивным,
 // Record<string, string> описывает объект "строка → строка"
-const labelTexts = reactive<Record<string, string>>({})
+const labelTexts = reactive<Record<string, string | undefined>>({})
 
 // следим за изменениями массива accounts
 watch(
@@ -48,23 +59,21 @@ function handleUpdateType(id: string, value: AccountType) {
   store.update(id, { type, password: value === 'ldap' ? null : '' })
 }
 
-function handleLabelUpdate(id:string, value: string ) {
-  store.update(id, { label: parseLabelValue(value) })
+function handleLabelUpdate(id: string, value: string | undefined) {
+  store.update(id, { label: parseLabelValue(value ?? '') })
 }
 
 function parseLabelValue(value: string): AccountLabel[] {
   return value
     .split(';')
-    .map(token => token.trim())
-    .filter(token => token.length > 0)
-    .map(token => ({ text: token }))
+    .map((token) => token.trim())
+    .filter((token) => token.length > 0)
+    .map((token) => ({ text: token }))
 }
 
 function formatLabelValue(labels: AccountLabel[]): string {
-  return labels.map(label => label.text).join(';')
+  return labels.map((label) => label.text).join(';')
 }
-
-
 </script>
 
 <template>
@@ -103,26 +112,29 @@ function formatLabelValue(labels: AccountLabel[]): string {
         <span class="accounts__th" aria-hidden="true" />
       </div>
       <n-form
+        v-for="account in accounts"
+        :key="account.id"
         autocomplete="off"
         :model="account"
         :rules="rules"
         label-placement="top"
-        v-for="account in accounts"
-        :key="account.id"
         class="accounts__row"
       >
         <n-input
           v-model:value="labelTexts[account.id]"
-          :value="formatLabelValue(account.label)"
           maxlength="50"
           placeholder="Метки"
           @blur="() => handleLabelUpdate(account.id, labelTexts[account.id])"
         />
-        <n-select v-model:value="account.type" :options="typeOptions" @update:value ="(value) => handleUpdateType(account.id, value)" />
+        <n-select
+          v-model:value="account.type"
+          :options="typeOptions"
+          @update:value="(value) => handleUpdateType(account.id, value)"
+        />
         <n-form-item label="Логин" path="login">
           <n-input v-model:value="account.login" placeholder="Логин" maxlength="100" />
         </n-form-item>
-        <n-form-item label="Пароль" path="password" v-if="account.type === 'local'">
+        <n-form-item v-if="account.type === 'local'" label="Пароль" path="password">
           <n-input
             v-model:value="account.password"
             type="password"
