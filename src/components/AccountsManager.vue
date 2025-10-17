@@ -131,10 +131,10 @@ function formatLabelValue(labels: AccountLabel[]): string {
           :options="typeOptions"
           @update:value="(value) => handleUpdateType(account.id, value)"
         />
-        <n-form-item label="Логин" path="login">
+        <n-form-item path="login">
           <n-input v-model:value="account.login" placeholder="Логин" maxlength="100" />
         </n-form-item>
-        <n-form-item v-if="account.type === 'local'" label="Пароль" path="password">
+        <n-form-item v-if="account.type === 'local'" path="password">
           <n-input
             v-model:value="account.password"
             type="password"
@@ -210,12 +210,6 @@ function formatLabelValue(labels: AccountLabel[]): string {
   margin-left: 12px;
 }
 
-.accounts__password {
-  min-height: 34px;
-  display: flex;
-  align-items: center;
-}
-
 .accounts__icon {
   opacity: 0.8;
   cursor: pointer;
@@ -239,5 +233,15 @@ function formatLabelValue(labels: AccountLabel[]): string {
     flex-direction: column;
     gap: 12px;
   }
+
+  /* растянуть форму и поля во всю ширину */
+  :deep(.n-form-item) { width: 100%; }
+
+  :deep(.n-form-item.n-form-item--top-labelled) {
+    grid-template-rows: minmax(0, auto) 12px;
+  }
+
+  :deep(.n-form-item .n-form-item-feedback-wrapper:not(:empty)) {
+    margin-top: 20px;}
 }
 </style>
