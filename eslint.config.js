@@ -6,6 +6,7 @@ import prettier from 'eslint-plugin-prettier'
 import eslintConfigPrettier from 'eslint-config-prettier'
 import vueParser from 'vue-eslint-parser'
 import path from 'path'
+import globals from 'globals'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -24,7 +25,11 @@ export default [
             parserOptions: {
                 parser: tseslint.parser,
                 extraFileExtensions: ['.vue']
-            }
+            },
+            globals: {
+                ...globals.browser,
+                ...globals.es2021,
+            },
         },
         settings: {
             'import/resolver': {
